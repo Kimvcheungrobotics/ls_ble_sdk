@@ -1,0 +1,37 @@
+import asyncio
+
+class AnimationPlayer:
+    def __init__(self, ble_client):
+        self.ble_client = ble_client
+        self.animation_command_char_uuid = 'ANIMATION_COMMAND_UUID'
+        self.animation_data_char_uuid = 'ANIMATION_DATA_UUID'
+
+    async def play_animation(self, animation_data):
+        try:
+            # Start the animation
+            await self.ble_client.write_characteristic(0, self.animation_command_char_uuid)
+
+            # Send animation data
+            await self.ble_client.write_characteristic(animation_data, self.animation_data_char_uuid)
+
+            # Stop the animation
+            await self.ble_client.write_characteristic(1, self.animation_command_char_uuid)
+
+            print("Animation played successfully.")
+        except Exception as e:
+            print(f"Error playing animation: {str(e)}")
+
+
+
+if __name__ == "__main__":
+    # Initialize your BLE client (you should adapt this to your setup)
+    ble_client = YourBLEClient()
+
+    # Create an AnimationPlayer instance
+    animation_player = AnimationPlayer(ble_client)
+
+    # Define your animation data (replace with your actual animation data)
+    animation_data = b'\x01\x02\x03\x04'  # Example animation data as bytes
+
+    # Play the animation
+    asyncio.run(animation_player.play_animation(animation_data))
